@@ -1,23 +1,22 @@
 ## 概述
 
-`ynpm`为`node`在公司内部的镜像仓库配套的命令行工具，根据镜像代理，嵌套`npm`，关于镜像和命令行工具说明如下：
+> 基于yon改版而来.更名为tnpm
 
-- 镜像
-  - 使用`Nexus Repository OSS`搭建`npm`镜像
-  - 镜像源使用淘宝`cnpm`镜像库
-  - 镜像无需同步，下载即缓存，实现一次下载，全员共享
-- 命令行
-  - 实现自动根据IP选择下载源
-    - 内网自动使用公司镜像
-    - 外网自动使用淘宝镜像
-    - 不对`npm`的镜像源入侵
+使用淘宝的镜像源来下载NPM包，不会更改默认的全局registry。仅此而已。
 
-总体实现：公司内通过使用`ynpm`,实现快速下载包，减少下载等待时间
+为什么不用cnpm?
+
+因为cnpm会按照它的那种包名`_版本@包名`并且链接到一个快捷方式的文件夹来的，并且之后再用npm是无法安装成功的。
+
+关于镜像和命令行工具说明如下：
+
+
+
 
 ## 安装
 
 ```
-npm install ynpm-tool -g
+npm install tnpm-tool -g
 ```
 
 
@@ -26,13 +25,11 @@ npm install ynpm-tool -g
 
 ```
 # 安装(install相关命令均支持)
-ynpm install xxx --option
+tnpm install xxx --option
 
 # 帮助
-ynpm 或 ynpm -h 或 ynpm --help
+tnpm 或 tnpm -h 或 tnpm --help
 
 # 版本
-ynpm -v 或 ynpm --version
+tnpm -v 或 tnpm --version
 ```
-
-- 其他命令暂不准备实现

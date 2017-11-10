@@ -8,14 +8,9 @@ const execSync = require('child_process').execSync;
 const exec = require('child_process').exec;
 const pkgFile = require('../package.json');
 const thunkify = require("thunkify");
-const tcpp = require('tcp-ping');
 const request = require('request');
 const ora = require('ora');
 
-const IPCOMPANY = '172.20.18.23';
-const YON_MIRROR = 'http://maven.yonyou.com/nexus/content/groups/NPM-Yonyou-Repository/';
-// const YON_MIRROR = 'https://registry.npm.taobao.org';
-// const DEAFAULT_MIRROR = 'https://registry.npmjs.org';
 const DEAFAULT_MIRROR = 'https://registry.npm.taobao.org';
 
 /**
@@ -23,7 +18,7 @@ const DEAFAULT_MIRROR = 'https://registry.npm.taobao.org';
  */
 const opt = process.argv[2];
 if(opt == '-v' || opt == '--version') {
-    console.log( 'Yonyou Package Manager(ynpm) : v' + pkgFile.version );
+    console.log( 'Package Manager : v' + pkgFile.version );
     process.exit(0);
 }
 
@@ -61,41 +56,20 @@ if(opt == '-v' || opt == '--version') {
  }
 
 const IP_Req = thunkify(request);
-const Ping = thunkify(tcpp.ping);
 const Exec = thunkify(exec);
 
 co(function* (){
-    //IP判断 - 耗时暂取消
-    /*
-    const IP_Response = yield IP_Req('https://api.ipify.org?format=json')
-    const IP_Body = IP_Response[IP_Response.length - 1]
-    const IP_ADDRESS = JSON.parse(IP_Body)['ip'];
-    const IP_REG = new RegExp(/^123\.103/);
-    if(IP_REG.test(IP_ADDRESS)){
-        console.log('内网')
-    }
-    */
     const argvs = process.argv;
     if(argvs[2] !== 'i' && argvs[2] != 'install'){
-        console.error(chalk.red('YNPM current only support to install packages \nPlease check your command :'));
+        console.error(chalk.red('NPM current only support to install packages \nPlease check your command :'));
         const incmd = argvs.splice(2).join(' ');
         console.log(chalk.green('ynpm ' + incmd));
         process.exit(1);
     }
 
-    // Ping内网
-    const Ping_Response = yield Ping({
-        address:IPCOMPANY,
-        timeout:50,
-        attempts:1
-    })
-    let registry = Ping_Response.avg ? YON_MIRROR : DEAFAULT_MIRROR;
+    let registry = DEAFAULT_MIRROR;
 
-    if(Ping_Response.avg) {
-        console.log(chalk.dim('Yonyou Mirror Downloading...'));
-    } else {
-        console.log(chalk.dim('CNPM Mirror Downloading...'));
-    }
+    console.log(chalk.dim('CNPM Mirror Downloading...'));
 
     console.log(chalk.dim(`Mirror:${registry}`));
 
@@ -110,7 +84,7 @@ co(function* (){
     const start = process.hrtime();
     const spinner = ora().start();
     spinner.color = 'green';
-    spinner.text = 'Installing package ⬇️... If happen error, call me, my mobile is 186...😝';
+    spinner.text = 'Installing package...';
     var data = yield Exec(arg_install);
     console.log(chalk.bold('\n\nInstall Info:\n' + data[0]));
     console.log(chalk.yellow('Warn Info:\n' + data[1]));
@@ -123,8 +97,7 @@ co(function* (){
 
 }).catch(err => {
     console.error(chalk.red('\n' + err));
-    // console.error(chalk.red(err.stack));
-    console.error(chalk.yellow('ynpm version: %s'), pkgFile.version);
-    console.error(chalk.yellow('ynpm args: %s'), process.argv.slice(2).join(' '));
+    console.error(chalk.yellow('npm version: %s'), pkgFile.version);
+    console.error(chalk.yellow('npm args: %s'), process.argv.slice(2).join(' '));
     process.exit(1);
 });
