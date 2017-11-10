@@ -7,7 +7,7 @@
     "tnpm": "bin/yon"
   },
   "scripts": {
-    
+    "dev" : ""
   },
   "repository": {
     "type": "git",
